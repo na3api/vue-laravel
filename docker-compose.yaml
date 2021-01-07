@@ -1,0 +1,31 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:latest
+    container_name: "nginx-${PROJECT_NAME}"
+    restart: always
+    ports:
+      - "${NGINX_PORT}:80"
+      - "${NGINX_PORT_SSL}:443"
+    volumes:
+      - ./app:/var/www/app:rw
+      - ./.docker/nginx/conf.d/nginx.template:/etc/nginx/conf.d/nginx.template:rw
+    command: /bin/sh -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/nginx.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    env_file:
+      - .env
+
+  php-fpm:
+    build: ./.docker/php-fpm
+    container_name: "app-${PROJECT_NAME}"
+    volumes:
+      - ./app:/var/www/app:rw
+      - ./.docker/php-fpm/conf/php.ini:/usr/local/etc/php/php.ini:rw
+      - ./.docker/php-fpm/supervisord.conf:/etc/supervisor/supervisord.conf
+    depends_on:
+      - nginx
+    ports:
+      - 80
+      - 433
+    env_file:
+      - .env
+
