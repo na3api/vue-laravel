@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 RUN set -xe \
     && docker-php-ext-configure mysqli --with-mysqli \
     && docker-php-ext-configure pdo_mysql --with-pdo-mysql
-RUN docker-php-ext-install -j$(nproc) iconv intl xml soap sodium opcache mysqli bcmath pcntl sockets zip
+RUN docker-php-ext-install -j$(nproc) iconv intl xml soap sodium opcache pdo_mysql mysqli bcmath pcntl sockets zip
 RUN docker-php-ext-install -j$(nproc) gd
 
 #install xdebug

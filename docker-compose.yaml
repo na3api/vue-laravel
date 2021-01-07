@@ -23,9 +23,24 @@ services:
       - ./.docker/php-fpm/supervisord.conf:/etc/supervisor/supervisord.conf
     depends_on:
       - nginx
+      - mysql
     ports:
       - 80
       - 433
     env_file:
       - .env
 
+  mysql:
+    image: mysql:8
+    container_name: "mysql-${PROJECT_NAME}"
+    volumes:
+      - ./.docker/mysql/data:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    env_file:
+      - .env
